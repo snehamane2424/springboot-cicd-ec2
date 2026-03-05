@@ -1,0 +1,19 @@
+name: Full CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    uses: ./.github/workflows/deploy.yml
+    with:
+      host: ${{ vars.EC2_HOST }}
+      user: ${{ vars.EC2_USER }}
+    secrets: inherit

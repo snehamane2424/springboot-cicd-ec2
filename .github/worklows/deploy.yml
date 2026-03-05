@@ -1,0 +1,41 @@
+name: Deploy to EC2
+
+on:
+  workflow_call:
+    inputs:
+      host:
+        required: true
+        type: string
+      user:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: springboot-jar
+
+      - name: Copy Jar to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ inputs.host }}
+          username: ${{ inputs.user }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "*.jar"
+          target: "/home/ubuntu/"
+
+      - name: Run App on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ inputs.host }}
+          username: ${{ inputs.user }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            pkill java || true
+            nohup java -jar /home/ubuntu/*.jar > app.log 2>&1 &

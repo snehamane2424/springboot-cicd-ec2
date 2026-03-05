@@ -1,0 +1,16 @@
+name: "Build Maven Project"
+description: "Setup Java and build Maven project"
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Build with Maven
+      run: mvn clean package
+      shell: bash

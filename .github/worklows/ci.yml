@@ -1,0 +1,22 @@
+name: CI Pipeline
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Composite Action
+        uses: ./.github/actions/build-maven
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: springboot-jar
+          path: target/*.jar
